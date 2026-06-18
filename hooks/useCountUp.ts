@@ -3,20 +3,19 @@ import { useEffect, useRef, useState } from "react";
 export function useCountUp(target: number, opts: { durationMs?: number; active: boolean }): number {
   const { durationMs = 1200, active } = opts;
   const [value, setValue] = useState(0);
-  const timerId = useRef<NodeJS.Timeout | null>(null);
+  const raf = useRef<number | null>(null);
 
   useEffect(() => {
     if (!active) { setValue(0); return; }
-    const start = Date.now();
-    const tick = () => {
-      const elapsed = Date.now() - start;
-      const t = Math.min(1, elapsed / durationMs);
+    const start = performance.now();
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - start) / durationMs);
       const eased = 1 - Math.pow(1 - t, 3); // easeOutCubic
       setValue(Math.round(target * eased));
-      if (t < 1) timerId.current = setTimeout(tick, 16);
+      if (t < 1) raf.current = requestAnimationFrame(tick);
     };
-    timerId.current = setTimeout(tick, 16);
-    return () => { if (timerId.current) clearTimeout(timerId.current); };
+    raf.current = requestAnimationFrame(tick);
+    return () => { if (raf.current) cancelAnimationFrame(raf.current); };
   }, [target, durationMs, active]);
 
   return value;
