@@ -88,3 +88,48 @@ export interface GetOwnedGamesResponse {
 export interface GetPlayerSummariesResponse {
   players: PlayerSummary[];
 }
+
+// Per-game metadata from the Steam store appdetails endpoint.
+export interface GameMeta {
+  appid: number;
+  genres: string[];      // official store genres, may be empty
+  priceCents: number;    // current store price in cents; 0 if free/unknown
+  isFree: boolean;
+}
+
+// A SteamGame enriched with store metadata.
+export interface GameWithMeta extends SteamGame {
+  genres: string[];
+  priceCents: number;
+  isFree: boolean;
+}
+
+export interface LibraryValueData {
+  totalCents: number;     // sum of priceCents across games
+  pricedCount: number;    // games that contributed a non-zero price
+  freeCount: number;      // games counted as free ($0)
+}
+
+export interface WrappedStats {
+  totalGames: number;
+  totalPlaytimeHours: number;   // rounded
+  totalPlaytimeDays: number;    // hours / 24, 1 decimal
+  hoursToFinishBacklog: number; // sum of estimated hours for unplayed games
+  daysToFinishBacklog: number;  // hoursToFinishBacklog / 8, rounded
+  mostPlayed: SteamGame | null; // highest playtime_forever
+  mostPlayedShare: number;      // % of total playtime, rounded
+  recentObsession: SteamGame | null; // highest playtime_2weeks, else null
+  topGenre: string | null;
+}
+
+export interface WrappedData {
+  player: PlayerSummary;
+  games: GameWithMeta[];
+  stats: WrappedStats;
+  shameScore: ShameScoreData;
+  genreDNA: GenreData[];
+  libraryValue: LibraryValueData;
+  rarityBadges: RarityBadge[];
+  isLiveData: boolean;
+  fetchedAt: string;
+}
