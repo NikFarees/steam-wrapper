@@ -45,7 +45,7 @@ export default function BacklogCalculator({ data }: Props) {
                   formatter={(v) => [`${v ?? 0}h`, "Hours"]}
                 />
                 <Bar dataKey="hours" radius={[4, 4, 0, 0]}>
-                  {data.byGenre.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
+                  {data.byGenre.map((entry, i) => <Cell key={entry.genre} fill={COLORS[i % COLORS.length]} />)}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
