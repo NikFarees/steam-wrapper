@@ -21,7 +21,7 @@ export async function fetchOwnedGames(
     if (!res.ok) return null;
 
     const data: SteamAPIResponse<GetOwnedGamesResponse> = await res.json();
-    return data?.response?.games ?? null;
+    return data?.response?.games ?? [];
   } catch {
     return null;
   }

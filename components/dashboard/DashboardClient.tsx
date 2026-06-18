@@ -70,7 +70,7 @@ export default function DashboardClient() {
       <main className="mx-auto max-w-7xl grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
         <ShameScoreCard data={data.shameScore} />
         <BacklogCalculator data={data.backlog} />
-        <RarityBadges badges={data.rarityBadges} />
+        {data.rarityBadges.length > 0 && <RarityBadges badges={data.rarityBadges} />}
         <GenreDNAChart data={data.genreDNA} />
       </main>
     </div>

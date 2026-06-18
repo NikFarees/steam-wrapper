@@ -80,7 +80,7 @@ export interface SteamAPIResponse<T> {
 
 export interface GetOwnedGamesResponse {
   game_count: number;
-  games: SteamGame[];
+  games?: SteamGame[];
 }
 
 export interface GetPlayerSummariesResponse {
