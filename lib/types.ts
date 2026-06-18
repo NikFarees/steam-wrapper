@@ -35,20 +35,6 @@ export interface ShameScoreData {
   topUnplayed: SteamGame[];     // up to 5 notable unplayed games
 }
 
-export interface BacklogItem {
-  appid: number;
-  name: string;
-  estimatedHours: number;
-  genre: string;
-}
-
-export interface BacklogData {
-  totalHours: number;
-  totalDays: number;
-  items: BacklogItem[];
-  byGenre: { genre: string; hours: number }[];
-}
-
 export interface GenreData {
   genre: string;
   playtimeHours: number;
@@ -63,17 +49,6 @@ export interface RarityBadge {
   globalPercentage: number;     // 0-100, lower = rarer
   description: string;
   iconUrl: string;
-}
-
-export interface DashboardData {
-  player: PlayerSummary;
-  games: SteamGame[];
-  shameScore: ShameScoreData;
-  backlog: BacklogData;
-  genreDNA: GenreData[];
-  rarityBadges: RarityBadge[];
-  isLiveData: boolean;
-  fetchedAt: string;            // ISO 8601 timestamp
 }
 
 export interface SteamAPIResponse<T> {
