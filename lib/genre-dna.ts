@@ -1,13 +1,18 @@
-import type { SteamGame, GenreData } from "@/lib/types";
-import { getGenreForGame } from "@/lib/genre-map";
+import type { GameWithMeta, GenreData } from "@/lib/types";
 
-export function buildGenreDNA(games: SteamGame[]): GenreData[] {
-  const played = games.filter((g) => g.playtime_forever > 0);
+const GENERIC_GENRES = new Set([
+  "Free to Play", "Early Access", "Indie", "Massively Multiplayer",
+]);
+
+export function buildGenreDNA(games: GameWithMeta[]): GenreData[] {
   const genreMap = new Map<string, number>();
-  for (const game of played) {
-    const genre = getGenreForGame(game);
+  for (const game of games) {
+    if (game.playtime_forever <= 0) continue;
     const hours = game.playtime_forever / 60;
-    genreMap.set(genre, (genreMap.get(genre) ?? 0) + hours);
+    for (const genre of game.genres) {
+      if (GENERIC_GENRES.has(genre)) continue;
+      genreMap.set(genre, (genreMap.get(genre) ?? 0) + hours);
+    }
   }
   const sorted = Array.from(genreMap.entries())
     .map(([genre, playtimeHours]) => ({ genre, playtimeHours }))

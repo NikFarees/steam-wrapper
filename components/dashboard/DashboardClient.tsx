@@ -3,11 +3,7 @@
 import { useRouter } from "next/navigation";
 import { LogOut, RefreshCw, Lock } from "lucide-react";
 import { useSteamData } from "@/hooks/useSteamData";
-import ShameScoreCard from "@/components/dashboard/ShameScoreCard";
-import BacklogCalculator from "@/components/dashboard/BacklogCalculator";
-import RarityBadges from "@/components/dashboard/RarityBadges";
-import GenreDNAChart from "@/components/dashboard/GenreDNAChart";
-import GameLibrary from "@/components/dashboard/GameLibrary";
+import WrappedExperience from "@/components/wrapped/WrappedExperience";
 import { Button } from "@/components/ui/button";
 
 export default function DashboardClient() {
@@ -50,17 +46,17 @@ export default function DashboardClient() {
   const isPrivate = data.isLiveData && data.games.length === 0 && data.player.communityvisibilitystate !== 3;
 
   return (
-    <div className="min-h-screen px-4 py-8 sm:px-6 lg:px-8">
-      <header className="mx-auto mb-8 flex max-w-7xl items-center justify-between">
+    <div className="relative">
+      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-3 bg-[#0a0e1a]/80 backdrop-blur-sm border-b border-white/5">
         <div className="flex items-center gap-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={data.player.avatarfull}
             alt={data.player.personaname}
-            className="h-10 w-10 rounded-full ring-2 ring-[#66c0f4]/30"
+            className="h-8 w-8 rounded-full ring-2 ring-[#66c0f4]/30"
           />
           <div>
-            <h1 className="text-base font-semibold text-slate-100">{data.player.personaname}</h1>
+            <h1 className="text-sm font-semibold text-slate-100">{data.player.personaname}</h1>
             <p className="text-xs text-slate-500">
               {data.isLiveData ? "Live data" : "Mock data"} · {new Date(data.fetchedAt).toLocaleTimeString()}
             </p>
@@ -78,7 +74,7 @@ export default function DashboardClient() {
       </header>
 
       {isPrivate && (
-        <div className="mx-auto mb-6 max-w-7xl">
+        <div className="fixed top-14 left-0 right-0 z-40 px-4">
           <div className="flex flex-col sm:flex-row sm:items-center gap-3 rounded-xl border border-yellow-500/20 bg-yellow-500/5 px-5 py-4">
             <Lock className="h-4 w-4 text-yellow-400 shrink-0" />
             <div className="flex-1">
@@ -99,13 +95,7 @@ export default function DashboardClient() {
         </div>
       )}
 
-      <main className="mx-auto max-w-7xl grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-        <ShameScoreCard data={data.shameScore} />
-        <BacklogCalculator data={data.backlog} />
-        {data.rarityBadges.length > 0 && <RarityBadges badges={data.rarityBadges} />}
-        <GenreDNAChart data={data.genreDNA} />
-        <GameLibrary games={data.games} />
-      </main>
+      <WrappedExperience data={data} />
     </div>
   );
 }

@@ -5,34 +5,6 @@ import type {
 
 const BASE = "https://api.steampowered.com";
 
-type SteamSpyResponse = {
-  appid: number;
-  name: string;
-  tags: Record<string, number>;
-};
-
-export async function fetchAppTags(appids: number[]): Promise<Record<number, string[]>> {
-  if (appids.length === 0) return {};
-  const results: Record<number, string[]> = {};
-  await Promise.allSettled(
-    appids.slice(0, 25).map(async (appid) => {
-      try {
-        const url = `https://steamspy.com/api.php?request=appdetails&appid=${appid}`;
-        const res = await fetch(url, { next: { revalidate: 86400 } });
-        if (!res.ok) return;
-        const data = await res.json() as SteamSpyResponse;
-        if (data?.tags && typeof data.tags === "object") {
-          results[appid] = Object.entries(data.tags)
-            .sort(([, a], [, b]) => b - a)
-            .map(([tag]) => tag)
-            .slice(0, 8);
-        }
-      } catch { /* continue */ }
-    })
-  );
-  return results;
-}
-
 export async function fetchOwnedGames(
   apiKey: string,
   steamId: string
@@ -73,4 +45,35 @@ export async function fetchPlayerSummary(
   } catch {
     return null;
   }
+}
+
+type GlobalPctResponse = { achievementpercentages?: { achievements?: { name: string; percent: number }[] } };
+type PlayerAchResponse = { playerstats?: { achievements?: { apiname: string; achieved: number; name?: string; description?: string }[] } };
+
+export async function fetchGlobalAchievementPct(appid: number): Promise<Record<string, number> | null> {
+  try {
+    const url = new URL(`${BASE}/ISteamUserStats/GetGlobalAchievementPercentagesForApp/v0002/`);
+    url.searchParams.set("gameid", String(appid));
+    url.searchParams.set("format", "json");
+    const res = await fetch(url.toString(), { next: { revalidate: 86400 } });
+    if (!res.ok) return null;
+    const data = (await res.json()) as GlobalPctResponse;
+    const out: Record<string, number> = {};
+    for (const a of data?.achievementpercentages?.achievements ?? []) out[a.name] = a.percent;
+    return out;
+  } catch { return null; }
+}
+
+export async function fetchPlayerAchievements(apiKey: string, steamId: string, appid: number) {
+  try {
+    const url = new URL(`${BASE}/ISteamUserStats/GetPlayerAchievements/v0001/`);
+    url.searchParams.set("key", apiKey);
+    url.searchParams.set("steamid", steamId);
+    url.searchParams.set("appid", String(appid));
+    url.searchParams.set("l", "en");
+    const res = await fetch(url.toString(), { next: { revalidate: 3600 } });
+    if (!res.ok) return null;
+    const data = (await res.json()) as PlayerAchResponse;
+    return (data?.playerstats?.achievements ?? []).filter((a) => a.achieved === 1);
+  } catch { return null; }
 }
