@@ -49,14 +49,18 @@ export default function RarityBadges({ badges }: Props) {
               className="relative flex flex-col items-center gap-2 rounded-xl border border-white/10 p-3 cursor-pointer overflow-hidden"
               style={{ backgroundColor: "rgba(255,255,255,0.03)" }}
             >
-              <div className="relative h-12 w-12 rounded-full overflow-hidden ring-2 ring-white/10">
-                <Image
-                  src={badge.iconUrl}
-                  alt={badge.achievementName}
-                  fill
-                  className="object-cover"
-                  unoptimized
-                />
+              <div className="relative h-12 w-12 rounded-full overflow-hidden ring-2 ring-white/10 flex items-center justify-center bg-white/5">
+                {badge.iconUrl ? (
+                  <Image
+                    src={badge.iconUrl}
+                    alt={badge.achievementName}
+                    fill
+                    className="object-cover"
+                    unoptimized
+                  />
+                ) : (
+                  <Medal className="h-6 w-6 text-slate-400" />
+                )}
               </div>
               <div className="text-center space-y-1">
                 <p className="text-xs font-semibold text-slate-200 leading-tight line-clamp-2">

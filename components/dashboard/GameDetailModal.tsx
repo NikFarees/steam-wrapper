@@ -5,10 +5,12 @@ import { X, Clock, Gamepad2, ExternalLink, CalendarDays } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getGenreForGame } from "@/lib/genre-map";
-import type { SteamGame } from "@/lib/types";
+import type { SteamGame, GameWithMeta } from "@/lib/types";
+
+type GameProp = SteamGame | GameWithMeta;
 
 interface Props {
-  game: SteamGame | null;
+  game: GameProp | null;
   onClose: () => void;
 }
 
@@ -23,7 +25,9 @@ function formatPlaytime(minutes: number): string {
 export default function GameDetailModal({ game, onClose }: Props) {
   if (!game) return null;
 
-  const genre = getGenreForGame(game);
+  const genre = ("genres" in game && game.genres && game.genres.length > 0)
+    ? game.genres[0]
+    : getGenreForGame(game);
   const isUnplayed = game.playtime_forever === 0;
   const recentHours = game.playtime_2weeks ? Math.floor(game.playtime_2weeks / 60) : null;
   const storeUrl = `https://store.steampowered.com/app/${game.appid}/`;
