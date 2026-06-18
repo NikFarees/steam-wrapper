@@ -52,3 +52,17 @@ export function getHoursToBeat(appid: number): number {
   }
   return FALLBACK_HOURS_TABLE[appid % 7];
 }
+
+const GENERIC_TAGS = new Set([
+  "Free to Play", "Multiplayer", "Online Co-Op", "Co-op", "Online PvP",
+  "Early Access", "Indie", "Singleplayer", "Single-player", "Full controller support",
+  "Controller", "Steam Achievements", "Steam Cloud", "Great Soundtrack",
+]);
+
+export function getGenreForGame(game: { appid: number; tags?: string[] }): string {
+  if (game.tags && game.tags.length > 0) {
+    const meaningful = game.tags.find((t) => !GENERIC_TAGS.has(t));
+    return meaningful ?? game.tags[0];
+  }
+  return getPrimaryGenre(game.appid);
+}

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import type { SteamGame, PlayerSummary, DashboardData } from "@/lib/types";
-import { fetchOwnedGames, fetchPlayerSummary } from "@/lib/steam-api";
+import { fetchOwnedGames, fetchPlayerSummary, fetchAppTags } from "@/lib/steam-api";
 import { MOCK_GAMES, MOCK_PLAYER, MOCK_RARITY_BADGES } from "@/lib/mock-data";
 import { calculateShameScore } from "@/lib/shame-score";
 import { calculateBacklog } from "@/lib/backlog-estimator";
@@ -36,12 +36,14 @@ export async function GET(): Promise<NextResponse<DashboardData>> {
         fetchPlayerSummary(apiKey, steamId),
       ]);
       if (games && player) {
+        const tagData = await fetchAppTags(games.map((g) => g.appid));
+        const gamesWithTags = games.map((g) => ({ ...g, tags: tagData[g.appid] ?? [] }));
         return NextResponse.json({
           player,
-          games,
-          shameScore: calculateShameScore(games),
-          backlog: calculateBacklog(games),
-          genreDNA: buildGenreDNA(games),
+          games: gamesWithTags,
+          shameScore: calculateShameScore(gamesWithTags),
+          backlog: calculateBacklog(gamesWithTags),
+          genreDNA: buildGenreDNA(gamesWithTags),
           rarityBadges: [],
           isLiveData: true,
           fetchedAt: new Date().toISOString(),

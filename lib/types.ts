@@ -5,6 +5,7 @@ export interface SteamGame {
   playtime_2weeks?: number;     // minutes last 2 weeks
   img_icon_url: string;
   img_logo_url?: string;
+  tags?: string[];              // top user-defined tags from SteamSpy
 }
 
 export interface PlayerSummary {
@@ -13,6 +14,7 @@ export interface PlayerSummary {
   avatarfull: string;
   profileurl: string;
   personastate: number;         // 0=offline, 1=online, 2=busy, 3=away
+  communityvisibilitystate?: number; // 1=private, 3=public
   loccountrycode?: string;
   lastlogoff?: number;          // unix timestamp
 }

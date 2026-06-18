@@ -1,11 +1,10 @@
-// components/dashboard/GenreDNAChart.tsx
-
 "use client";
 
 import {
   RadarChart, PolarGrid, PolarAngleAxis,
   Radar, ResponsiveContainer, Tooltip,
 } from "recharts";
+import { BarChart2 } from "lucide-react";
 import type { GenreData } from "@/lib/types";
 
 interface Props { data: GenreData[] }
@@ -13,16 +12,24 @@ interface Props { data: GenreData[] }
 export default function GenreDNAChart({ data }: Props) {
   if (data.length === 0) {
     return (
-      <div className="glass p-6 flex items-center justify-center">
-        <p className="text-sm text-slate-500">No playtime data available.</p>
+      <div className="glass p-6 flex flex-col gap-5">
+        <div className="flex items-center gap-2">
+          <BarChart2 className="h-4 w-4 text-[#66c0f4]" />
+          <h2 className="text-xs font-semibold text-slate-400 tracking-widest uppercase">Genre breakdown</h2>
+        </div>
+        <div className="flex items-center justify-center h-32">
+          <p className="text-sm text-slate-500">No playtime data available.</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="glass p-6 flex flex-col gap-4">
-      <h2 className="text-lg font-semibold text-slate-100">Genre DNA</h2>
-      <p className="text-xs text-slate-500">Playtime distribution by genre (hours)</p>
+    <div className="glass p-6 flex flex-col gap-5">
+      <div className="flex items-center gap-2">
+        <BarChart2 className="h-4 w-4 text-[#66c0f4]" />
+        <h2 className="text-xs font-semibold text-slate-400 tracking-widest uppercase">Genre breakdown</h2>
+      </div>
 
       <div className="h-64 w-full">
         <ResponsiveContainer width="100%" height="100%">
@@ -51,10 +58,10 @@ export default function GenreDNAChart({ data }: Props) {
         </ResponsiveContainer>
       </div>
 
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-3">
         {data.slice(0, 4).map((item) => (
           <div key={item.genre} className="flex items-center gap-1.5 text-xs text-slate-400">
-            <span className="inline-block h-2 w-2 rounded-full bg-[#66c0f4]" />
+            <span className="inline-block h-2 w-2 rounded-full bg-[#66c0f4] shrink-0" />
             {item.genre}: {item.playtimeHours}h
           </div>
         ))}

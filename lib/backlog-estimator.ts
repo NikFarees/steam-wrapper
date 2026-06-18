@@ -1,14 +1,13 @@
 import type { SteamGame, BacklogData, BacklogItem } from "@/lib/types";
-import { getPrimaryGenre, getHoursToBeat } from "@/lib/genre-map";
+import { getGenreForGame, getHoursToBeat, GENRE_HOURS_TO_BEAT } from "@/lib/genre-map";
 
 export function calculateBacklog(games: SteamGame[]): BacklogData {
   const unplayed = games.filter((g) => g.playtime_forever === 0);
-  const items: BacklogItem[] = unplayed.map((game) => ({
-    appid: game.appid,
-    name: game.name,
-    estimatedHours: getHoursToBeat(game.appid),
-    genre: getPrimaryGenre(game.appid),
-  }));
+  const items: BacklogItem[] = unplayed.map((game) => {
+    const genre = getGenreForGame(game);
+    const estimatedHours = GENRE_HOURS_TO_BEAT[genre] ?? getHoursToBeat(game.appid);
+    return { appid: game.appid, name: game.name, estimatedHours, genre };
+  });
   const totalHours = items.reduce((sum, item) => sum + item.estimatedHours, 0);
   const totalDays = Math.round(totalHours / 8);
   const genreMap = new Map<string, number>();
